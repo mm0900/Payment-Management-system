@@ -1,5 +1,5 @@
 # Payment-Management-system
-Payment Management System Database Management System
+Payment Management System (Database Management System)
 
 **INTRODUCTION**
 The Payment Management System (PMS) is a state-of-the-art digital solution designed to transform the landscape of financial transactions by enabling efficient payment processing and management. Developed to address the critical need for streamlined financial operations, particularly in areas with high transaction volumes or complex payment requirements, the PMS offers a reliable platform for businesses and customers alike. With an intuitive interface and robust features, including secure payment gateways, transaction tracking, and comprehensive reporting, the PMS empowers businesses to manage payments seamlessly. By breaking down barriers to financial operations and enhancing communication between businesses and customers, the PMS revolutionizes payment management, ensuring timely transactions, continuity of financial operations, and improved financial outcomes for all.
