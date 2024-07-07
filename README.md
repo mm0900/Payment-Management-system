@@ -31,14 +31,18 @@ Profit calculation by date/month/season for payment services.
 Manage transaction details and stock of financial records.
 Track payment processing and delivery.
 Automated stock replenishment based on transaction volume and profit calculation for financial services.
+
 **FRONT-END DESIGN**
 Front-end web development details
 HTML: Provides the foundational structure of web pages, essential for all web professionals and the starting point for web content creation.
 CSS: Controls presentation, formatting, and layout of HTML elements, enhancing the visual appearance of websites.
 JavaScript: Controls the behavior of elements on web pages, adding interactivity and complexity to site functionality.
+
 **HTML:**
 HTML is at the core of every web page, regardless of the complexity of a site or the number of technologies involved. It's an essential skill for any web professional and the starting point for anyone learning how to create content for the web. And, luckily for us, it's surprisingly easy to learn.
+
 **CSS:**
 CSS stands for Cascading Style Sheets. This programming language dictates how the HTML elements of a website should actually appear on the frontend of the page.
+
 **JavaScript:**
 JavaScript is a more complicated language than HTML or CSS, and it wasn't released in beta form until 1995. Nowadays, JavaScript is supported by all modern web browsers and is used on almost every site on the web for more powerful and complex functionality.
