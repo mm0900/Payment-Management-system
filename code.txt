@@ -1,0 +1,155 @@
+create database akhil;
+use akhil;
+create table Login(login_id  int, login_username varchar(250) , userpassword varchar(100) , loginrole_id varchar(250));
+create table Userdetails(user_id int, user_name varchar(250), user_mobile varchar(10), user_email varchar(50));
+create table Roles(role_id int , role_name varchar(250));
+create table Permission(per_id int,per_role_id varchar(30),per_module varchar(50),per_name varchar(50));
+create table bill(bill_id int, bill_num int , bill_type varchar(50), bill_desc varchar(50) , bill_receipt varchar(100));
+ create table receipt(rec_id int, rec_type varchar(40), rec_desc varchar(40));
+ create table payment(pay_amt int,pay_date date, pay_cus_id varchar(50), pay_id int, pay_desc varchar(300));
+create table account(acc_id int, acc_num int, acc_cus_id varchar(300), acc_type varchar(300) , acc_desc varchar(300));
+show tables
+INSERT INTO Login (login_id, login_username, userpassword, loginrole_id) VALUES (1, 'john_doe', 'password123', 'admin');
+INSERT INTO Login (login_id, login_username, userpassword, loginrole_id) VALUES  (2, 'jane_smith', 'qwerty456', 'user');
+show tables
+select * from Login;
+INSERT INTO Userdetails (user_id, user_name, user_mobile, user_email) VALUES (1, 'John Doe', '1234567890', 'john@example.com'),(2, 'Jane Smith', '9876543210', 'jane@example.com');
+INSERT INTO Roles (role_id, role_name) VALUES (1, 'Admin'),(2, 'User');
+INSERT INTO Permission (per_id, per_role_id, per_module, per_name) VALUES (1, 'admin', 'users', 'create'),(2, 'admin', 'users', 'read'),(3, 'admin', 'users', 'update'),(4, 'user', 'profile', 'read'),(5, 'user', 'profile', 'update');
+INSERT INTO bill (bill_id, bill_num, bill_type, bill_desc, bill_receipt) VALUES (1, 1001, 'electric', 'Electricity bill for January', 'receipt_001'),(2, 1002, 'water', 'Water bill for February', 'receipt_002');
+INSERT INTO receipt (rec_id, rec_type, rec_desc) VALUES (1, 'electric', 'Receipt for Electricity bill payment'),(2, 'water', 'Receipt for Water bill payment');
+INSERT INTO payment (pay_amt, pay_date, pay_cus_id, pay_id, pay_desc) VALUES (100, '2024-01-15', 'cus_001', 1, 'Payment for electricity bill'),(75, '2024-02-10', 'cus_002', 2, 'Payment for water bill');
+INSERT INTO account (acc_id, acc_num, acc_cus_id, acc_type, acc_desc) VALUES (1, 10001, 'cus_001', 'savings', 'Savings account for John Doe'),(2, 10002, 'cus_002', 'checking', 'Checking account for Jane Smith');
+select * from payment;
+
+#ex6
+SELECT user_name, user_email, (SELECT role_name FROM Roles WHERE role_id = Login.loginrole_id) AS role_name FROM Userdetails JOIN Login ON Userdetails.user_id = Login.login_id;
+ SELECT * FROM Permission WHERE per_role_id IN (SELECT role_id FROM Roles WHERE role_name = 'Admin');
+SELECT (SELECT SUM(pay_amt) FROM payment WHERE pay_cus_id = 'cus_002') AS total_payment;
+SELECT * FROM account WHERE acc_cus_id IN (SELECT DISTINCT pay_cus_id FROM payment);
+ SELECT bill_desc FROM bill WHERE bill_id = 'cus_002';
+ SELECT rec_type, rec_desc FROM receipt WHERE rec_id IN (SELECT bill_receipt FROM bill WHERE bill_id = 'cus_001');
+SELECT * from payment where pay_amt =(select max(pay_amt) from payment);
+select count(*) from payment where pay_cus_id in (select distinct acc_cus_id from account);
+select *from Userdetails where user_id= (select login_id from login where login_username = 'John_doe');
+
+#ex8
+#join queries
+#1)inner join
+#1)
+SELECT COUNT(*) AS total_users FROM Userdetails INNER JOIN Login ON Userdetails.user_id = Login.login_id WHERE Login.loginrole_id = 'admin';
+#2)
+SELECT bill.bill_id, bill.bill_desc, receipt.rec_desc  FROM bill  INNER JOIN receipt ON bill.bill_receipt = receipt.rec_id;
+#3)
+SELECT account.acc_num, Userdetails.user_name, Userdetails.user_email FROM account INNER JOIN Userdetails ON account.acc_cus_id = Userdetails.user_id;
+#4)
+SELECT bill.bill_id, bill.bill_num, receipt.rec_desc FROM bill INNER JOIN receipt ON bill.bill_receipt = receipt.rec_id;
+#5)
+SELECT Permission.per_module, Permission.per_name FROM Permission INNER JOIN Roles ON Permission.per_role_id = Roles.role_id WHERE Roles.role_name = 'Admin';
+
+#) left join
+SELECT Userdetails.user_name, IFNULL(Roles.role_name, 'No Role Assigned') AS role_name FROM Userdetails LEFT JOIN Login ON Userdetails.user_id = Login.login_id LEFT JOIN Roles ON Login.loginrole_id = Roles.role_id;
+SELECT Permission.per_module, IFNULL(Permission.per_name, 'No Permission Assigned') AS per_name FROM Permission LEFT JOIN Roles ON Permission.per_role_id = Roles.role_id WHERE Roles.role_name = 'Admin';
+SELECT bill.bill_id, bill.bill_num, IFNULL(receipt.rec_desc, 'No Receipt Available') AS rec_desc FROM bill LEFT JOIN receipt ON bill.bill_receipt = receipt.rec_id;
+#)right join
+SELECT IFNULL(Userdetails.user_name, 'No User Assigned') AS user_name, Roles.role_name FROM Userdetails RIGHT JOIN Login ON Userdetails.user_id = Login.login_id RIGHT JOIN Roles ON Login.loginrole_id = Roles.role_id;
+SELECT IFNULL(Permission.per_module, 'No Module Assigned') AS per_module, Permission.per_name FROM Permission RIGHT JOIN Roles ON Permission.per_role_id = Roles.role_id WHERE Roles.role_name = 'Admin';
+SELECT IFNULL(bill.bill_id, 'No Bill Available') AS bill_id, IFNULL(bill.bill_num, 'No Bill Number Available') AS bill_num, receipt.rec_desc FROM bill RIGHT JOIN receipt ON bill.bill_receipt = receipt.rec_id;
+
+#)set operators 
+#1) union
+SELECT login_username AS username FROM Login UNION SELECT user_name AS username FROM Userdetails;
+SELECT role_name FROM Roles UNION SELECT per_role_id AS role_name FROM Permission;
+SELECT bill_type FROM Bill UNION SELECT rec_type AS bill_type FROM Receipt;
+SELECT pay_desc FROM Payment UNION SELECT login_username AS pay_desc FROM Login;
+SELECT acc_type FROM account UNION SELECT user_name AS acc_type FROM Userdetails;
+#union all
+SELECT login_username AS username FROM Login UNION ALL SELECT user_name AS username FROM Userdetails;
+SELECT role_name FROM Roles UNION ALL SELECT per_role_id AS role_name FROM Permission;
+SELECT bill_type FROM Bill UNION ALL SELECT rec_type AS bill_type FROM Receipt;
+SELECT pay_desc FROM Payment UNION ALL SELECT login_username AS pay_desc FROM Login;
+SELECT acc_type FROM Account UNION ALL SELECT user_name AS acc_type FROM Userdetails;
+#intersect
+SELECT login_username AS username FROM Login INTERSECT SELECT user_name AS username FROM Userdetails;
+SELECT role_name FROM Roles INTERSECT SELECT per_role_id AS role_name FROM Permission;
+SELECT bill_type FROM Bill INTERSECT SELECT rec_type AS bill_type FROM Receipt;
+SELECT pay_desc FROM Payment INTERSECT SELECT login_username AS pay_desc FROM Login;
+SELECT acc_type FROM Account INTERSECT SELECT user_name AS acc_type FROM Userdetails;
+
+SELECT login_username AS username FROM Login MINUS SELECT user_name AS username FROM Userdetails;
+SELECT role_name FROM Roles MINUS SELECT per_role_id AS role_name FROM Permission;
+SELECT per_module FROM Permission MINUS SELECT bill_module FROM Bill;
+SELECT user_email FROM Userdetails MINUS SELECT pay_email FROM Payment;
+SELECT acc_num FROM Account MINUS SELECT pay_acc_num FROM Payment;
+
+
+#ex9
+#conditional queries
+#1)
+SELECT Userdetails.user_name,
+       SUM(CASE WHEN payment.pay_amt IS NOT NULL THEN payment.pay_amt ELSE 0 END) AS total_payment
+FROM Userdetails
+LEFT JOIN payment ON Userdetails.user_id = payment.pay_cus_id
+GROUP BY Userdetails.user_name;
+
+#2)
+SELECT bill.bill_id, bill.bill_desc,
+       CASE WHEN receipt.rec_desc IS NOT NULL THEN receipt.rec_desc ELSE 'No Receipt' END AS receipt_desc
+FROM bill
+LEFT JOIN receipt ON bill.bill_receipt = receipt.rec_id;
+
+#3)
+SELECT Userdetails.user_id, Userdetails.user_name
+FROM Userdetails
+LEFT JOIN payment ON Userdetails.user_id = payment.pay_cus_id
+WHERE payment.pay_amt IS NULL;
+
+#4)
+SELECT COUNT(CASE WHEN payment.pay_amt IS NOT NULL THEN 1 END) AS users_with_payments
+FROM Userdetails
+LEFT JOIN payment ON Userdetails.user_id = payment.pay_cus_id;
+#5)
+SELECT Userdetails.user_id, Userdetails.user_name,
+       IF(SUM(payment.pay_amt) > 0, 'Paid', 'Not Paid') AS payment_status
+FROM Userdetails
+LEFT JOIN payment ON Userdetails.user_id = payment.pay_cus_id
+GROUP BY Userdetails.user_id, Userdetails.user_name;
+#iterative queries
+#1)
+WITH RECURSIVE UserIDs AS (
+    SELECT MIN(user_id) AS user_id FROM Userdetails
+    UNION ALL
+    SELECT user_id + 1 FROM UserIDs WHERE user_id < (SELECT MAX(user_id) FROM Userdetails)
+)
+SELECT user_id FROM UserIDs;
+#2)
+WITH RECURSIVE BillNumbers AS (
+    SELECT MIN(bill_num) AS bill_num FROM bill
+    UNION ALL
+    SELECT bill_num + 1 FROM BillNumbers WHERE bill_num < (SELECT MAX(bill_num) FROM bill)
+)
+SELECT bill_num FROM BillNumbers;
+#3)
+WITH RECURSIVE PaymentIDs AS (
+    SELECT MIN(pay_id) AS pay_id FROM payment
+    UNION ALL
+    SELECT pay_id + 1 FROM PaymentIDs WHERE pay_id < (SELECT MAX(pay_id) FROM payment)
+)
+SELECT pay_id FROM PaymentIDs;
+#4)
+WITH RECURSIVE AccountNumbers AS (
+    SELECT MIN(acc_num) AS acc_num FROM account
+    UNION ALL
+    SELECT acc_num + 1 FROM AccountNumbers WHERE acc_num < (SELECT MAX(acc_num) FROM account)
+)
+SELECT acc_num FROM AccountNumbers;
+#5)
+WITH RECURSIVE ReceiptIDs AS (
+    SELECT MIN(rec_id) AS rec_id FROM receipt
+    UNION ALL
+    SELECT rec_id + 1 FROM ReceiptIDs WHERE rec_id < (SELECT MAX(rec_id) FROM receipt)
+)
+SELECT rec_id FROM ReceiptIDs;
+
+σuser_id > 2(Userdetails)
+
